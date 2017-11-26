@@ -6,5 +6,7 @@ Lightweight implementation of consumer/producer Akka Actors.
 
 Usage (SBT):
 ```scala
+resolvers += "jitpack" at "https://jitpack.io"
+
 libraryDependencies += "com.github.bartekdobija" % "kafka-akka-actors" % "{Tag}"
 ```

@@ -8,10 +8,12 @@ import org.codehaus.jackson.map.ObjectMapper
 
 import scala.concurrent.duration._
 
-class Log {
-  @JsonProperty("ts") var timestamp: Long = _
-  @JsonProperty("type") var `type`: String = _
-  @JsonProperty("data") var data: String = _
+object KafkaJsonConsumerActorSpec {
+  class Log {
+    @JsonProperty("ts") var timestamp: Long = _
+    @JsonProperty("type") var `type`: String = _
+    @JsonProperty("data") var data: String = _
+  }
 }
 
 class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {
@@ -25,7 +27,7 @@ class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {
       withRunningKafka {
         createCustomTopic("logs", Map.empty[String, String], 1, 1)
 
-        actor = system.actorOf(KafkaJsonConsumerActor.props[Log]("logs", "gid", "localhost:6001"))
+        actor = system.actorOf(KafkaJsonConsumerActor.props[KafkaJsonConsumerActorSpec.Log]("logs", "gid", "localhost:6001"))
         actor ! Subscribe
         expectMsg(Subscribed)
 
