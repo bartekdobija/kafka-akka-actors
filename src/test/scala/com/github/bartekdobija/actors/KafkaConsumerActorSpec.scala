@@ -2,13 +2,12 @@ package com.github.bartekdobija.actors
 
 import akka.actor.{ActorRef, PoisonPill}
 import com.github.bartekdobija.actors.KafkaConsumerActor.{Record, Subscribe, Subscribed}
-import net.manub.embeddedkafka.EmbeddedKafka
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.{LongDeserializer, StringDeserializer}
 
 import scala.concurrent.duration._
 
-class KafkaConsumerActorSpec extends ActorSpec with EmbeddedKafka {
+class KafkaConsumerActorSpec extends ActorSpec {
 
   private var actor: ActorRef = _
   private val consumerConfig = Map(
@@ -16,8 +15,6 @@ class KafkaConsumerActorSpec extends ActorSpec with EmbeddedKafka {
   )
   private val topic = getClass.getSimpleName
   private val groupId = getClass.getSimpleName
-  private val bootstrap = "localhost:6001"
-
 
   classOf[KafkaConsumerActor[_, _]].getSimpleName must {
 

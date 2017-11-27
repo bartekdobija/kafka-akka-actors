@@ -2,7 +2,6 @@ package com.github.bartekdobija.actors
 
 import akka.actor.{ActorRef, PoisonPill}
 import com.github.bartekdobija.actors.KafkaConsumerActor.{Record, Subscribe, Subscribed}
-import net.manub.embeddedkafka.EmbeddedKafka
 import org.apache.kafka.clients.consumer.ConsumerConfig
 
 import scala.concurrent.duration._
@@ -11,7 +10,7 @@ object KafkaJsonConsumerActorSpec {
   case class Log(ts: String, `type`: String, data: String)
 }
 
-class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {
+class KafkaJsonConsumerActorSpec extends ActorSpec {
 
   private var actor: ActorRef = _
   private val consumerConfig = Map(
@@ -19,7 +18,6 @@ class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {
   )
   private val topic = getClass.getSimpleName
   private val groupId = getClass.getSimpleName
-  private val bootstrap = "localhost:6001"
 
   classOf[KafkaJsonConsumerActor[_]].getSimpleName must {
     "consume JSON events" in {

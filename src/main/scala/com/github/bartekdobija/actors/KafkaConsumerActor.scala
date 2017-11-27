@@ -93,6 +93,10 @@ class KafkaConsumerActor[K, V](
     }(context.system.dispatcher)
   }
 
+  override def postStop(): Unit = {
+    consumer.close()
+  }
+
   override def receive: Receive = {
     case Subscribe =>
       subscribe(sender)
