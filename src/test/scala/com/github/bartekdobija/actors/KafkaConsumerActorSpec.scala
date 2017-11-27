@@ -26,7 +26,7 @@ class KafkaConsumerActorSpec extends ActorSpec with EmbeddedKafka {
 
         createCustomTopic(topic)
 
-        actor = system.actorOf(KafkaConsumerActor.props[Long, String](topic, groupId, bootstrap, new LongDeserializer, new StringDeserializer, consumerConfig))
+        actor = system.actorOf(KafkaConsumerActor.props[Long, String](topic, bootstrap, groupId, new LongDeserializer, new StringDeserializer, consumerConfig))
 
         actor ! Subscribe
         expectMsg(Subscribed)

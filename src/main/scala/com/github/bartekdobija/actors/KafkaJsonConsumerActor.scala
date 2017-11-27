@@ -14,20 +14,20 @@ object KafkaJsonConsumerActor {
   val NAME: String = getClass.getSimpleName
 
   def props[T: ClassTag](topic: String,
-                         groupId: String,
                          bootstrap: String,
+                         groupId: String = NAME,
                          config: Map[String, AnyRef] = Map.empty): Props =
-    Props(new KafkaJsonConsumerActor[T](topic, groupId, bootstrap, config))
+    Props(new KafkaJsonConsumerActor[T](topic, bootstrap, groupId, config))
 }
 
 class KafkaJsonConsumerActor[T: ClassTag](topic: String,
-                                          groupId: String,
                                           bootstrap: String,
+                                          groupId: String,
                                           config: Map[String, AnyRef] =
                                             Map.empty)
     extends KafkaConsumerActor[Long, JsonNode](topic,
-                                               groupId,
                                                bootstrap,
+                                               groupId,
                                                new LongDeserializer,
                                                new JsonDeserializer,
                                                config) {

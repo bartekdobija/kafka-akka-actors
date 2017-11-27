@@ -27,16 +27,18 @@ class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {
   private val bootstrap = "localhost:6001"
 
   classOf[KafkaJsonConsumerActor[_]].getSimpleName must {
-    "consume JSON logs" in {
+    "consume JSON events" in {
+
+      val event = "{\"ts\": 12345, \"type\": \"com.github.bartekdobija.Log\", \"data\": \"hello world\"}"
 
       withRunningKafka {
         createCustomTopic(topic)
 
-        actor = system.actorOf(KafkaJsonConsumerActor.props[KafkaJsonConsumerActorSpec.Log](topic, groupId, bootstrap, consumerConfig))
+        actor = system.actorOf(KafkaJsonConsumerActor.props[KafkaJsonConsumerActorSpec.Log](topic, bootstrap, groupId, consumerConfig))
         actor ! Subscribe
         expectMsg(Subscribed)
 
-        publishStringMessageToKafka(topic, "{\"ts\": 12345, \"type\": \"com.github.bartekdobija.Log\", \"data\": \"hello world\"}")
+        publishStringMessageToKafka(topic, event)
 
         expectMsgClass(5 seconds, classOf[Record])
 

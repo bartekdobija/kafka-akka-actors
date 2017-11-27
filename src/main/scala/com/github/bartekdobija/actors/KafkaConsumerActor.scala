@@ -32,16 +32,16 @@ object KafkaConsumerActor {
   val NAME: String = getClass.getSimpleName
 
   def props[K, V](topic: String,
-                  groupId: String,
                   bootstrap: String,
+                  groupId: String = getClass.getSimpleName,
                   keyDeserializer: Deserializer[_] = new LongDeserializer,
                   valueDeserializer: Deserializer[_] = new StringDeserializer,
                   configProps: Map[String, AnyRef] = Map.empty,
                   schemaRegistry: String = ""): Props =
     Props(classOf[KafkaConsumerActor[K, V]],
           topic,
-          groupId,
           bootstrap,
+          groupId,
           keyDeserializer,
           valueDeserializer,
           configProps,
@@ -50,8 +50,8 @@ object KafkaConsumerActor {
 
 class KafkaConsumerActor[K, V](
     private val topic: String,
-    private val groupId: String,
     private val bootstrap: String,
+    private val groupId: String = getClass.getSimpleName,
     private val keyDeserializer: Deserializer[_] = new LongDeserializer,
     private val valueDeserializer: Deserializer[_] = new StringDeserializer,
     private val configProps: Map[String, AnyRef] = Map.empty,
