@@ -36,6 +36,7 @@ object KafkaConsumerActor {
                   bootstrap: String,
                   keyDeserializer: Deserializer[_] = new LongDeserializer,
                   valueDeserializer: Deserializer[_] = new StringDeserializer,
+                  configProps: Map[String, AnyRef] = Map.empty,
                   schemaRegistry: String = ""): Props =
     Props(classOf[KafkaConsumerActor[K, V]],
           topic,
@@ -43,6 +44,7 @@ object KafkaConsumerActor {
           bootstrap,
           keyDeserializer,
           valueDeserializer,
+          configProps,
           schemaRegistry)
 }
 
@@ -52,6 +54,7 @@ class KafkaConsumerActor[K, V](
     private val bootstrap: String,
     private val keyDeserializer: Deserializer[_] = new LongDeserializer,
     private val valueDeserializer: Deserializer[_] = new StringDeserializer,
+    private val configProps: Map[String, AnyRef] = Map.empty,
     private val schemaRegistry: String = "")
     extends Actor
     with ActorLogging {
@@ -76,6 +79,9 @@ class KafkaConsumerActor[K, V](
               valueDeserializer.getClass)
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, KafkaConsumerActor.NAME)
     props.put("schema.registry.url", schemaRegistry)
+
+    // add extra configuration properties
+    configProps.foreach { case (k, v) => props.put(k, v) }
 
     import collection.JavaConverters._
     consumer = new KafkaConsumer(props)

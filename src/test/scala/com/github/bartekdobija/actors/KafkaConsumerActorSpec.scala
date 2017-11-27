@@ -3,15 +3,20 @@ package com.github.bartekdobija.actors
 import akka.actor.{ActorRef, PoisonPill}
 import com.github.bartekdobija.actors.KafkaConsumerActor.{Record, Subscribe, Subscribed}
 import net.manub.embeddedkafka.EmbeddedKafka
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.{LongDeserializer, StringDeserializer}
-import org.codehaus.jackson.map.ObjectMapper
 
 import scala.concurrent.duration._
 
 class KafkaConsumerActorSpec extends ActorSpec with EmbeddedKafka {
 
   private var actor: ActorRef = _
-  private val objectMapper = new ObjectMapper()
+  private val consumerConfig = Map(
+    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG -> "earliest"
+  )
+  private val topic = getClass.getSimpleName
+  private val groupId = getClass.getSimpleName
+  private val bootstrap = "localhost:6001"
 
 
   classOf[KafkaConsumerActor[_, _]].getSimpleName must {
@@ -19,17 +24,17 @@ class KafkaConsumerActorSpec extends ActorSpec with EmbeddedKafka {
     "consume messages" in {
       withRunningKafka {
 
-        createCustomTopic("scraped", Map.empty[String, String], 1, 1)
+        createCustomTopic(topic)
 
-        actor = system.actorOf(KafkaConsumerActor.props[Long, String]("scraped", "gid", "localhost:6001", new LongDeserializer, new StringDeserializer))
+        actor = system.actorOf(KafkaConsumerActor.props[Long, String](topic, groupId, bootstrap, new LongDeserializer, new StringDeserializer, consumerConfig))
 
         actor ! Subscribe
         expectMsg(Subscribed)
 
-        publishStringMessageToKafka("scraped", "{\"foo\":\"bar\"}")
-        publishStringMessageToKafka("scraped", "{\"a\":\"b\"}")
+        publishStringMessageToKafka(topic, "{\"foo\":\"bar\"}")
+        publishStringMessageToKafka(topic, "{\"a\":\"b\"}")
 
-        expectMsgClass(14 seconds, classOf[Record])
+        expectMsgClass(5 seconds, classOf[Record])
         expectMsgClass(classOf[Record])
 
         actor ! PoisonPill
