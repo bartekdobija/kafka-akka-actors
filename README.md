@@ -9,4 +9,8 @@ Usage (SBT):
 resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies += "com.github.bartekdobija" % "kafka-akka-actors" % "{Tag}"
+
+// select your preferred jackson version
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.+"
+libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.+"
 ```
