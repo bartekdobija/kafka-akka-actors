@@ -11,6 +11,7 @@ object Dependencies {
     "org.apache.kafka" % "kafka-clients" % kafkaVersion % Provided,
 
     "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion % Provided,
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion % Provided,
 
     "com.typesafe.akka" %% "akka-actor" % akkaActorVersion % Provided,
 

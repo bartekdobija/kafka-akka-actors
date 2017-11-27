@@ -1,7 +1,6 @@
 package com.github.bartekdobija.actors
 
 import akka.actor.{ActorRef, PoisonPill}
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.github.bartekdobija.actors.KafkaConsumerActor.{Record, Subscribe, Subscribed}
 import net.manub.embeddedkafka.EmbeddedKafka
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -9,11 +8,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import scala.concurrent.duration._
 
 object KafkaJsonConsumerActorSpec {
-  class Log {
-    @JsonProperty("ts") var timestamp: Long = _
-    @JsonProperty("type") var `type`: String = _
-    @JsonProperty("data") var data: String = _
-  }
+  case class Log(ts: String, `type`: String, data: String)
 }
 
 class KafkaJsonConsumerActorSpec extends ActorSpec with EmbeddedKafka {

@@ -2,6 +2,8 @@ package com.github.bartekdobija.actors
 
 import akka.actor.Props
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.github.bartekdobija.actors.KafkaConsumerActor.Record
 import com.github.bartekdobija.serdes.JsonDeserializer
 import org.apache.kafka.clients.consumer.ConsumerRecords
@@ -32,7 +34,8 @@ class KafkaJsonConsumerActor[T: ClassTag](topic: String,
                                                new JsonDeserializer,
                                                config) {
 
-  protected val objectMapper = new ObjectMapper()
+  protected val om = new ObjectMapper() with ScalaObjectMapper
+  om.registerModule(DefaultScalaModule)
 
   override protected def dispatchRecords(
       value: ConsumerRecords[Long, JsonNode]): Unit = {
@@ -40,7 +43,7 @@ class KafkaJsonConsumerActor[T: ClassTag](topic: String,
     subscribed.foreach {
       case (_, sub) =>
         value.records(topic).forEach { record =>
-          sub ! Record(objectMapper.treeToValue(record.value(), ct))
+          sub ! Record(om.treeToValue(record.value(), ct))
         }
     }
   }
