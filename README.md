@@ -43,5 +43,9 @@ val actor = system.actorOf(KafkaJsonProducerActor.props(bootstrap))
 // or generic producer
 val actor = system.actorOf(KafkaProducerActor.props[Long, String](bootstrap))
 
+// for JSON Producer
+actor ! Message(topic, SomeEvent(1,"a"))
+
+// for generic
 actor ! Message(topic, "event")
 ```

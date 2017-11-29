@@ -36,16 +36,14 @@ object KafkaConsumerActor {
                   groupId: String = getClass.getSimpleName,
                   keyDeserializer: Deserializer[_] = new LongDeserializer,
                   valueDeserializer: Deserializer[_] = new StringDeserializer,
-                  configProps: Map[String, AnyRef] = Map.empty,
-                  schemaRegistry: String = ""): Props =
+                  configProps: Map[String, AnyRef] = Map.empty): Props =
     Props(classOf[KafkaConsumerActor[K, V]],
           topic,
           bootstrap,
           groupId,
           keyDeserializer,
           valueDeserializer,
-          configProps,
-          schemaRegistry)
+          configProps)
 }
 
 class KafkaConsumerActor[K, V](
@@ -54,8 +52,7 @@ class KafkaConsumerActor[K, V](
     private val groupId: String = getClass.getSimpleName,
     private val keyDeserializer: Deserializer[_] = new LongDeserializer,
     private val valueDeserializer: Deserializer[_] = new StringDeserializer,
-    private val configProps: Map[String, AnyRef] = Map.empty,
-    private val schemaRegistry: String = "")
+    private val configProps: Map[String, AnyRef] = Map.empty)
     extends Actor
     with ActorLogging {
 
@@ -78,7 +75,6 @@ class KafkaConsumerActor[K, V](
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
               valueDeserializer.getClass)
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, KafkaConsumerActor.NAME)
-    props.put("schema.registry.url", schemaRegistry)
 
     // add extra configuration properties
     configProps.foreach { case (k, v) => props.put(k, v) }
