@@ -2,12 +2,15 @@ package com.github.bartekdobija.actors
 
 import akka.actor.{ActorRef, PoisonPill}
 import com.github.bartekdobija.actors.KafkaConsumerActor.{Record, Subscribe, Subscribed}
+import com.github.bartekdobija.actors.KafkaJsonConsumerActorSpec.Log
+import com.github.bartekdobija.serdes.JsonSerializer
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.common.serialization.Serializer
 
 import scala.concurrent.duration._
 
 object KafkaJsonConsumerActorSpec {
-  case class Log(ts: String, `type`: String, data: String)
+  case class Log(a: String, b: Seq[Seq[String]])
 }
 
 class KafkaJsonConsumerActorSpec extends ActorSpec {
@@ -19,20 +22,19 @@ class KafkaJsonConsumerActorSpec extends ActorSpec {
   private val topic = getClass.getSimpleName
   private val groupId = getClass.getSimpleName
 
+  implicit val ser: Serializer[Any] = new JsonSerializer()
+  private val event = Log("a", Seq(Seq("a"), Seq("b")))
+
   classOf[KafkaJsonConsumerActor[_]].getSimpleName must {
     "consume JSON events" in {
-
-      val event = "{\"ts\": 12345, \"type\": \"com.github.bartekdobija.Log\", \"data\": \"hello world\"}"
-
       withRunningKafka {
         createCustomTopic(topic)
 
-        actor = system.actorOf(KafkaJsonConsumerActor.props[KafkaJsonConsumerActorSpec.Log](topic, bootstrap, groupId, consumerConfig))
+        actor = system.actorOf(KafkaJsonConsumerActor.props[Log](topic, bootstrap, groupId, consumerConfig))
         actor ! Subscribe
         expectMsg(Subscribed)
 
-        publishStringMessageToKafka(topic, event)
-
+        publishToKafka[Any](topic, event)
         expectMsgClass(5 seconds, classOf[Record])
 
         actor ! PoisonPill

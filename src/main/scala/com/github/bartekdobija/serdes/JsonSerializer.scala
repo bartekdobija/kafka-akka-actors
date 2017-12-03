@@ -2,7 +2,7 @@ package com.github.bartekdobija.serdes
 
 import java.util
 
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import org.apache.kafka.common.errors.SerializationException

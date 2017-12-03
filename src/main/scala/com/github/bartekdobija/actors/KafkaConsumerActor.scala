@@ -77,9 +77,9 @@ class KafkaConsumerActor[K, V](
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, KafkaConsumerActor.NAME)
 
     // add extra configuration properties
-    configProps.foreach { case (k, v) => props.put(k, v) }
+    import scala.collection.JavaConverters._
+    props.putAll(configProps.asJava)
 
-    import collection.JavaConverters._
     consumer = new KafkaConsumer(props)
     consumer.subscribe(Seq(topic).asJava)
 

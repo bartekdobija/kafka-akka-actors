@@ -11,7 +11,7 @@ object KafkaJsonProducerActor {
 
   def props(bootstrap: String,
             config: Map[String, AnyRef] = Map.empty): Props =
-    Props(new KafkaJsonProducerActor(bootstrap, config))
+    Props(classOf[KafkaJsonProducerActor], bootstrap, config)
 }
 
 class KafkaJsonProducerActor(bootstrap: String, config: Map[String, AnyRef])

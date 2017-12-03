@@ -22,11 +22,11 @@ object KafkaProducerActor {
       config: Map[String, AnyRef] = Map.empty,
       keySerializer: Serializer[_] = new StringSerializer,
       valueSerializer: Serializer[_] = new StringSerializer): Props =
-    Props(
-      new KafkaProducerActor[K, V](bootstrap,
-                                   config,
-                                   keySerializer,
-                                   valueSerializer))
+    Props(classOf[KafkaProducerActor[K, V]],
+          bootstrap,
+          config,
+          keySerializer,
+          valueSerializer)
 }
 
 class KafkaProducerActor[K, V](

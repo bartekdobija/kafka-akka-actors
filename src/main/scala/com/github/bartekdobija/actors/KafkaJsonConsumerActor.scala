@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.github.bartekdobija.actors.KafkaConsumerActor.Record
 import com.github.bartekdobija.serdes.JsonDeserializer
-import org.apache.kafka.clients.consumer.ConsumerRecords
+import org.apache.kafka.clients.consumer.{ConsumerRecord, ConsumerRecords}
 import org.apache.kafka.common.serialization.LongDeserializer
 
 import scala.reflect.ClassTag
@@ -42,8 +42,9 @@ class KafkaJsonConsumerActor[T: ClassTag](topic: String,
     val ct = classTag[T].runtimeClass
     subscribed.foreach {
       case (_, sub) =>
-        value.records(topic).forEach { record =>
-          sub ! Record(om.treeToValue(record.value(), ct))
+        value.records(topic).forEach {
+          record: ConsumerRecord[Long, JsonNode] =>
+            sub ! Record(om.treeToValue(record.value(), ct))
         }
     }
   }
