@@ -16,7 +16,7 @@ class KafkaProducerActorSpec extends ActorSpec {
         actor = system.actorOf(KafkaProducerActor.props[Long, String](bootstrap))
 
         val m = "test"
-        actor ! Message(topic, m)
+        actor ! Message(topic, m.getBytes())
         assertResult(m)(consumeFirstStringMessageFrom(topic))
 
       }

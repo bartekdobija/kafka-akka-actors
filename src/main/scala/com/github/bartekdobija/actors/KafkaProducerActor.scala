@@ -10,7 +10,11 @@ import org.apache.kafka.clients.producer.{
   ProducerConfig,
   ProducerRecord
 }
-import org.apache.kafka.common.serialization.{Serializer, StringSerializer}
+import org.apache.kafka.common.serialization.{
+  ByteArraySerializer,
+  Serializer,
+  StringSerializer
+}
 
 object KafkaProducerActor {
   val NAME: String = getClass.getName
@@ -20,8 +24,8 @@ object KafkaProducerActor {
   def props[K, V](
       bootstrap: String,
       config: Map[String, AnyRef] = Map.empty,
-      keySerializer: Serializer[_] = new StringSerializer,
-      valueSerializer: Serializer[_] = new StringSerializer): Props =
+      keySerializer: Serializer[_] = new ByteArraySerializer,
+      valueSerializer: Serializer[_] = new ByteArraySerializer): Props =
     Props(classOf[KafkaProducerActor[K, V]],
           bootstrap,
           config,
@@ -32,8 +36,8 @@ object KafkaProducerActor {
 class KafkaProducerActor[K, V](
     private val bootstrap: String,
     private val config: Map[String, AnyRef] = Map.empty,
-    private val keySerializer: Serializer[_] = new StringSerializer,
-    private val valueSerializer: Serializer[_] = new StringSerializer)
+    private val keySerializer: Serializer[_] = new ByteArraySerializer,
+    private val valueSerializer: Serializer[_] = new ByteArraySerializer)
     extends Actor
     with ActorLogging {
 

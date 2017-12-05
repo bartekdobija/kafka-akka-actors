@@ -11,9 +11,8 @@ import org.apache.kafka.clients.consumer.{
   KafkaConsumer
 }
 import org.apache.kafka.common.serialization.{
-  Deserializer,
-  LongDeserializer,
-  StringDeserializer
+  ByteArrayDeserializer,
+  Deserializer
 }
 
 import scala.collection.mutable
@@ -34,8 +33,9 @@ object KafkaConsumerActor {
   def props[K, V](topic: String,
                   bootstrap: String,
                   groupId: String = getClass.getSimpleName,
-                  keyDeserializer: Deserializer[_] = new LongDeserializer,
-                  valueDeserializer: Deserializer[_] = new StringDeserializer,
+                  keyDeserializer: Deserializer[_] = new ByteArrayDeserializer,
+                  valueDeserializer: Deserializer[_] =
+                    new ByteArrayDeserializer,
                   configProps: Map[String, AnyRef] = Map.empty): Props =
     Props(classOf[KafkaConsumerActor[K, V]],
           topic,
@@ -50,8 +50,8 @@ class KafkaConsumerActor[K, V](
     private val topic: String,
     private val bootstrap: String,
     private val groupId: String = getClass.getSimpleName,
-    private val keyDeserializer: Deserializer[_] = new LongDeserializer,
-    private val valueDeserializer: Deserializer[_] = new StringDeserializer,
+    private val keyDeserializer: Deserializer[_] = new ByteArrayDeserializer,
+    private val valueDeserializer: Deserializer[_] = new ByteArrayDeserializer,
     private val configProps: Map[String, AnyRef] = Map.empty)
     extends Actor
     with ActorLogging {

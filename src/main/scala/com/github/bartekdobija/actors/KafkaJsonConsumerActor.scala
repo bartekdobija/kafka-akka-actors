@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
 import com.github.bartekdobija.actors.KafkaConsumerActor.Record
 import com.github.bartekdobija.serdes.JsonDeserializer
 import org.apache.kafka.clients.consumer.{ConsumerRecord, ConsumerRecords}
-import org.apache.kafka.common.serialization.LongDeserializer
 
 import scala.reflect.ClassTag
 import scala.reflect._
@@ -27,23 +26,23 @@ class KafkaJsonConsumerActor[T: ClassTag](topic: String,
                                           groupId: String,
                                           config: Map[String, AnyRef] =
                                             Map.empty)
-    extends KafkaConsumerActor[Long, JsonNode](topic,
-                                               bootstrap,
-                                               groupId,
-                                               new LongDeserializer,
-                                               new JsonDeserializer,
-                                               config) {
+    extends KafkaConsumerActor[Array[Byte], JsonNode](topic,
+                                                      bootstrap,
+                                                      groupId,
+                                                      valueDeserializer =
+                                                        new JsonDeserializer,
+                                                      configProps = config) {
 
   protected val om = new ObjectMapper() with ScalaObjectMapper
   om.registerModule(DefaultScalaModule)
 
   override protected def dispatchRecords(
-      value: ConsumerRecords[Long, JsonNode]): Unit = {
+      value: ConsumerRecords[Array[Byte], JsonNode]): Unit = {
     val ct = classTag[T].runtimeClass
     subscribed.foreach {
       case (_, sub) =>
         value.records(topic).forEach {
-          record: ConsumerRecord[Long, JsonNode] =>
+          record: ConsumerRecord[Array[Byte], JsonNode] =>
             sub ! Record(om.treeToValue(record.value(), ct))
         }
     }
