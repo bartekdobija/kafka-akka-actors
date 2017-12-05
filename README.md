@@ -4,6 +4,8 @@ Lightweight implementation of consumer/producer Akka Actors.
 
 (early version)
 
+API Example can be found in the [ExampleSpec](src/test/scala/com/github/bartekdobija/actors/ExampleSpec.scala) test
+
 Usage (SBT Deps):
 ```scala
 resolvers += "jitpack" at "https://jitpack.io"
