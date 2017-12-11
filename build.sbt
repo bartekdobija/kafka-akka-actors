@@ -1,7 +1,7 @@
 import Dependencies._
 
 lazy val commonSettings = Seq(
-  version := "0.1",
+  version := "0.1.1",
   organization := "com.github.bartekdobija",
   scalaVersion := "2.12.2"
 )
